@@ -16,9 +16,6 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          // Burada, API'nize eriþmesine izin vermek istediðiniz
-                          // frontend uygulamanýzýn adresini belirtin.
-                          // Geliþtirme için genellikle birden fazla adres ekleyebilirsiniz.
                           policy.WithOrigins("http//localhost:1440", // React için varsayýlan
                                              "https//localhost:1433", // Angular için varsayýlan
                                              "https//localhost:7169") // Swagger'ýn kendisi için
