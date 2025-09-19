@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MultiShop.IdentityServer;
 using MultiShop.IdentityServer.Data;
+using MultiShop.IdentityServer.Models;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -13,13 +15,15 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddDbContext<ApplicationDbContext>(options => 
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    builder.Services.AddControllers();
 
     builder.Host.UseSerilog((ctx, lc) => lc
         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
         .Enrich.FromLogContext()
         .ReadFrom.Configuration(ctx.Configuration));
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
     var app = builder
         .ConfigureServices()
@@ -27,6 +31,13 @@ try
 
     // this seeding is only for the template to bootstrap the DB and users.
     // in production you will likely want a different approach.
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
     if (args.Contains("/seed"))
     {
         Log.Information("Seeding database...");
@@ -45,4 +56,5 @@ finally
 {
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
-}
+} 
+
