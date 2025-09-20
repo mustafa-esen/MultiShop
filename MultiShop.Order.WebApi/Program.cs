@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MultiShop.Order.Application.Features.CQRS.Handlers.AddressHandlers;
 using MultiShop.Order.Application.Features.CQRS.Handlers.OrderDetailHandlers;
 using MultiShop.Order.Application.Interfaces;
@@ -9,20 +10,27 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+{
+    opt.Authority = builder.Configuration["IdentityServerUrl"];
+    opt.Audience = "ResourceOrder";
+    opt.RequireHttpsMetadata = false;
+});
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+/*
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http//localhost:1440", // React için varsayýlan
-                                             "https//localhost:1433", // Angular için varsayýlan
-                                             "https//localhost:7169") // Swagger'ýn kendisi için
-                                .AllowAnyHeader()  // Gelen istekte herhangi bir baþlýða izin ver
-                                .AllowAnyMethod(); // Herhangi bir HTTP metoduna (GET, POST, PUT, DELETE) izin ver
+                          policy.WithOrigins("http//localhost:7070",
+                                             "https//localhost:7071",
+                                             "https//localhost:7072") 
+                                .AllowAnyHeader()  
+                                .AllowAnyMethod(); 
                       });
-});
+});*/
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddApplicationServices(builder.Configuration); 
@@ -61,6 +69,7 @@ app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

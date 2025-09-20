@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.IdentityServer.Dtos;
 using MultiShop.IdentityServer.Models;
+using static Duende.IdentityServer.IdentityServerConstants;
 
 namespace MultiShop.IdentityServer.Controllers
 {
+    [Authorize(LocalApi.PolicyName)] //[Authorize("IdentityServerApi")] aynı anlama gelir
     [Route("api/[controller]")]
     [ApiController]
     public class RegistersController : ControllerBase
@@ -31,7 +34,12 @@ namespace MultiShop.IdentityServer.Controllers
             {
                 return Ok("Kullanıcı başarıyla eklendi.");
             }
-            return Ok("Bir hata oluştu tekrar deneyiniz.");
+            var errors = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new
+            {
+                Message = "Kullanıcı oluşturulurken bir veya daha fazla hata oluştu.",
+                Errors = errors
+            });
         }
 
         [HttpPut]
