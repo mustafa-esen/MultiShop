@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Cargo.BusinessLayer.Abstract;
 using MultiShop.Cargo.DtoLayer.Dtos.CargoCompanyDtos;
 using MultiShop.Cargo.DtoLayer.Dtos.CargoCustomerDtos;
 using MultiShop.Cargo.EntityLayer.Concrete;
+using System.Runtime.Serialization;
 
 namespace MultiShop.Cargo.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CargoCustomersController : ControllerBase
@@ -56,20 +59,18 @@ namespace MultiShop.Cargo.WebApi.Controllers
             return Ok("Kargo Müşteri Silme İşlemi Başarıyla Yapıldı");
         }
 
-        [HttpDelete]
-        public IActionResult RemoveCargoCustomerById(UpdateCargoCustomerDto updateCargoCustomerDto)
+        [HttpPut]
+        public IActionResult UpdateCargoCustomer(UpdateCargoCustomerDto updateCargoCustomerDto)
         {
-            CargoCustomer cargoCustomer = new CargoCustomer
-            {
-                Address = updateCargoCustomerDto.Address,
-                City = updateCargoCustomerDto.City,
-                District = updateCargoCustomerDto.District,
-                Email = updateCargoCustomerDto.Email,
-                Name = updateCargoCustomerDto.Name,
-                Surname = updateCargoCustomerDto.
-                Phone = updateCargoCustomerDto.Phone
-            };
-            _cargoCustomerService.TUpdate(cargoCustomer);
+            var value = _cargoCustomerService.TGetById(updateCargoCustomerDto.CargoCustomerId);
+            value.Address = updateCargoCustomerDto.Address;
+            value.City = updateCargoCustomerDto.City;
+            value.District = updateCargoCustomerDto.District;
+            value.Email = updateCargoCustomerDto.Email;
+            value.Name = updateCargoCustomerDto.Name;
+            value.Surname = updateCargoCustomerDto.Surname;
+            value.Phone = updateCargoCustomerDto.Phone;
+            _cargoCustomerService.TUpdate(value);
             return Ok("Kargo Müşteri Güncelleme İşlemi Başarıyla Yapıldı");
         }
     }

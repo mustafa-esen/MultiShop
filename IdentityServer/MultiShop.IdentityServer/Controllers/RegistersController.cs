@@ -41,11 +41,5 @@ namespace MultiShop.IdentityServer.Controllers
                 Errors = errors
             });
         }
-
-        [HttpPut]
-        public IActionResult UserUpdate()
-        {
-            return Ok("Güncelleme Başarılı");
-        }
     }
 }

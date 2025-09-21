@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultiShop.Cargo.BusinessLayer.Abstract;
 using MultiShop.Cargo.DtoLayer.Dtos.CargoCompanyDtos;
@@ -6,6 +7,7 @@ using MultiShop.Cargo.EntityLayer.Concrete;
 
 namespace MultiShop.Cargo.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CargoCompaniesController : ControllerBase
@@ -38,7 +40,7 @@ namespace MultiShop.Cargo.WebApi.Controllers
         [HttpDelete]
         public IActionResult RemoveCargoCatergory(int id)
         {
-            _cargoCompanyService.TDelete(id);   
+            _cargoCompanyService.TDelete(id);
             return Ok("Kargo Şirketi Başarıyla Silindi");
         }
 
@@ -50,14 +52,12 @@ namespace MultiShop.Cargo.WebApi.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateCargoCatergory(UpdateCargoCompanyDto updateCargoCompanyDto)
+        public IActionResult UpdateCargoCompany(UpdateCargoCompanyDto updateCargoCompanyDto)
         {
-            CargoCompany cargoCompany = new CargoCompany
-            {
-                CargoCompanyName = updateCargoCompanyDto.CargoCompanyName
-            };
-            _cargoCompanyService.TUpdate(cargoCompany);
-            return Ok("Kargo Şirketi Başarıyla Silindi");
+            var value = _cargoCompanyService.TGetById(updateCargoCompanyDto.CargoCompanyId);
+            value.CargoCompanyName = updateCargoCompanyDto.CargoCompanyName;
+            _cargoCompanyService.TUpdate(value);
+            return Ok("Kargo Şirketi Başarıyla güncellendi");
         }
     }
 }

@@ -18,19 +18,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-/*
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http//localhost:7070",
-                                             "https//localhost:7071",
-                                             "https//localhost:7072") 
-                                .AllowAnyHeader()  
-                                .AllowAnyMethod(); 
+                          policy.AllowAnyMethod()
+                                .AllowAnyOrigin()
+                                .AllowAnyHeader();
                       });
-});*/
+});
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddApplicationServices(builder.Configuration); 
